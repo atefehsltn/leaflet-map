@@ -6,12 +6,16 @@ import { AppComponent } from './app.component';
 import { FirstMapComponent } from './first-map/first-map.component';
 import { SecoundMapComponent } from './secound-map/secound-map.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ShowDialogComponent } from './show-dialog/show-dialog.component';
+import { ThirdMapComponent } from './third-map/third-map.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     FirstMapComponent,
-    SecoundMapComponent
+    SecoundMapComponent,
+    ShowDialogComponent,
+    ThirdMapComponent
   ],
   imports: [
     BrowserModule,
@@ -20,6 +24,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 
   ],
   exports: [
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

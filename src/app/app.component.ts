@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import * as L from 'leaflet';
 import 'leaflet-draw';
 import "leaflet-draw/dist/leaflet.draw.js";
+import { ShowDialogComponent } from './show-dialog/show-dialog.component';
 
 
 @Component({
@@ -14,21 +16,26 @@ export class AppComponent implements OnInit {
   map: any;
   lblLocation: any;
 
+  constructor(private dialog: MatDialog) {
+
+  }
+
+   locationList = [
+    { lat: 37.7195265626227, lng: 46.93359375000001, title: "تبریز", Address: "تبریز خیابان اول پلاک 1", placeType: "h" },
+    { lat: 35.60496409485937, lng: 51.50390625000001, title: "تهران", Address: "تهران خیابان اول پلاک 1", placeType: "h" },
+    { lat: 32.54851512118243, lng: 51.767578125, title: "اصفهان", Address: "اصفهان خیابان اول پلاک 1", placeType: "h" },
+    { lat: 35.783389740701296, lng: 58.88671875000001, title: "مشهد", Address: "مشهد خیابان اول پلاک 1", placeType: "h" },
+    { lat: 34.562259303839774, lng: 50.93261718750001, title: "قم", Address: "قم خیابان اول پلاک 1", placeType: "h" },
+    { lat: 29.231097541675027, lng: 52.99804687500001, title: "شیراز", Address: "شیراز خیابان اول پلاک 1", placeType: "r" },
+    { lat: 27.061667813752774, lng: 55.98632812500001, title: "بندرلنگه", Address: "بندرلنگه خیابان اول پلاک 1", placeType: "r" },
+    { lat: 29.11600059007595, lng: 60.51269531250001, title: "زاهدان", Address: "زاهدان خیابان اول پلاک 1", placeType: "r" },
+    { lat: 31.767357597242206, lng: 48.91113281250001, title: "اهواز", Address: "اهواز خیابان اول پلاک 1", placeType: "r" },
+    { lat: 31.767357597242206, lng: 54.31640625000001, title: "یزد", Address: "یزد خیابان اول پلاک 1", placeType: "r" }
+  ];
 
   ngOnInit(): void {
 
-    var locationList = [
-      {lat: 37.7195265626227, lng: 46.93359375000001, title: "تبریز", Address: "تبریز خیابان اول پلاک 1", placeType: "h"},
-      {lat: 35.60496409485937, lng: 51.50390625000001, title: "تهران", Address: "تهران خیابان اول پلاک 1", placeType: "h"},
-      {lat: 32.54851512118243, lng: 51.767578125, title: "اصفهان", Address: "اصفهان خیابان اول پلاک 1", placeType: "h"},
-      {lat: 35.783389740701296, lng: 58.88671875000001, title: "مشهد", Address: "مشهد خیابان اول پلاک 1", placeType: "h"},
-      {lat: 34.562259303839774, lng: 50.93261718750001, title: "قم", Address: "قم خیابان اول پلاک 1", placeType: "h"},
-      {lat: 29.231097541675027, lng: 52.99804687500001, title: "شیراز", Address: "شیراز خیابان اول پلاک 1", placeType: "r"},
-      {lat: 27.061667813752774, lng: 55.98632812500001, title: "بندرلنگه", Address: "بندرلنگه خیابان اول پلاک 1", placeType: "r"},
-      {lat: 29.11600059007595, lng: 60.51269531250001, title: "زاهدان", Address: "زاهدان خیابان اول پلاک 1", placeType: "r"},
-      {lat: 31.767357597242206, lng: 48.91113281250001, title: "اهواز", Address: "اهواز خیابان اول پلاک 1", placeType: "r"},
-      {lat: 31.767357597242206, lng: 54.31640625000001, title: "یزد", Address: "یزد خیابان اول پلاک 1", placeType: "r"}
-  ];
+
 
     var tileLayer1 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Design By Atefeh Slotani'
@@ -54,7 +61,7 @@ export class AppComponent implements OnInit {
     };
 
     var drawingLayers = {
-      "هتل ها ": hotelEditableLayers
+      "موقعیت ها ": hotelEditableLayers
     };
 
     L.control.layers(mainLayers, drawingLayers, {
@@ -101,11 +108,11 @@ export class AppComponent implements OnInit {
     });
 
 
-    for(let i=0; i< locationList.length; i++) {
-      if(locationList[i].placeType == "h"){
-        L.marker([locationList[i].lat , locationList[i].lng] , {icon: hotelIcon }).on('click',(e: L.LeafletMouseEvent) => { showDetails(e, i)}).addTo(hotelEditableLayers)
-      }else {
-        L.marker([locationList[i].lat , locationList[i].lng] , {icon: resturantIcon}).on('click',(e: L.LeafletMouseEvent) => { showDetails(e, i)}).addTo(hotelEditableLayers)
+    for (let i = 0; i < this.locationList.length; i++) {
+      if (this.locationList[i].placeType == "h") {
+        L.marker([this.locationList[i].lat, this.locationList[i].lng], { icon: hotelIcon }).on('click', (e: L.LeafletMouseEvent) => { this.showDetails(i) }).addTo(hotelEditableLayers)
+      } else {
+        L.marker([this.locationList[i].lat, this.locationList[i].lng], { icon: resturantIcon }).on('click', (e: L.LeafletMouseEvent) => { this.showDetails(i) }).addTo(hotelEditableLayers)
 
       }
     }
@@ -125,8 +132,27 @@ export class AppComponent implements OnInit {
 
   }
 
-  showDetails(e: any,i: any) {
+  showDetails(index: number) {
 
+
+    const dialogRef = this.dialog.open(ShowDialogComponent, {
+      width: '30%',
+      data: {
+        title: this.locationList[index].title,
+        address: this.locationList[index].Address,
+
+      }
+    });
   }
+
+
+      // search
+    // var searchLayer = L.layerGroup().addTo(this.map);
+    // // const searchControl: any = new (<any>L.Control).Search({
+    // //   layer: this.searchLayer
+    // // });
+    // this.map.addControl((<any>L.Control).Search({
+    //   layer: searchLayer
+    // }));
 
 }
