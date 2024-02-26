@@ -3,7 +3,11 @@ import { MatDialog } from '@angular/material/dialog';
 import * as L from 'leaflet';
 import 'leaflet-draw';
 import "leaflet-draw/dist/leaflet.draw.js";
-import { ShowDialogComponent } from './show-dialog/show-dialog.component';
+import { ShowDialogComponent } from './components/show-dialog/show-dialog.component';
+import { CreateRecordComponent } from './components/create-record/create-record.component';
+import { EditRecordComponent } from './components/edit-record/edit-record.component';
+import { RemoveRecordComponent } from './components/remove-record/remove-record.component';
+
 
 
 @Component({
@@ -21,16 +25,16 @@ export class AppComponent implements OnInit {
   }
 
    locationList = [
-    { lat: 37.7195265626227, lng: 46.93359375000001, title: "تبریز", Address: "تبریز خیابان اول پلاک 1", placeType: "h" },
-    { lat: 35.60496409485937, lng: 51.50390625000001, title: "تهران", Address: "تهران خیابان اول پلاک 1", placeType: "h" },
-    { lat: 32.54851512118243, lng: 51.767578125, title: "اصفهان", Address: "اصفهان خیابان اول پلاک 1", placeType: "h" },
-    { lat: 35.783389740701296, lng: 58.88671875000001, title: "مشهد", Address: "مشهد خیابان اول پلاک 1", placeType: "h" },
-    { lat: 34.562259303839774, lng: 50.93261718750001, title: "قم", Address: "قم خیابان اول پلاک 1", placeType: "h" },
-    { lat: 29.231097541675027, lng: 52.99804687500001, title: "شیراز", Address: "شیراز خیابان اول پلاک 1", placeType: "r" },
-    { lat: 27.061667813752774, lng: 55.98632812500001, title: "بندرلنگه", Address: "بندرلنگه خیابان اول پلاک 1", placeType: "r" },
-    { lat: 29.11600059007595, lng: 60.51269531250001, title: "زاهدان", Address: "زاهدان خیابان اول پلاک 1", placeType: "r" },
-    { lat: 31.767357597242206, lng: 48.91113281250001, title: "اهواز", Address: "اهواز خیابان اول پلاک 1", placeType: "r" },
-    { lat: 31.767357597242206, lng: 54.31640625000001, title: "یزد", Address: "یزد خیابان اول پلاک 1", placeType: "r" }
+    { isDeleted:false, lat: 37.7195265626227, lng: 46.93359375000001, title: "تبریز", Address: "تبریز خیابان اول پلاک 1", placeType: "h" },
+      { isDeleted:false, lat: 35.60496409485937, lng: 51.50390625000001, title: "تهران", Address: "تهران خیابان اول پلاک 1", placeType: "h" },
+      { isDeleted:false, lat: 32.54851512118243, lng: 51.767578125, title: "اصفهان", Address: "اصفهان خیابان اول پلاک 1", placeType: "h" },
+      { isDeleted:false, lat: 35.783389740701296, lng: 58.88671875000001, title: "مشهد", Address: "مشهد خیابان اول پلاک 1", placeType: "h" },
+      { isDeleted:false, lat: 34.562259303839774, lng: 50.93261718750001, title: "قم", Address: "قم خیابان اول پلاک 1", placeType: "h" },
+      { isDeleted:false, lat: 29.231097541675027, lng: 52.99804687500001, title: "شیراز", Address: "شیراز خیابان اول پلاک 1", placeType: "r" },
+      { isDeleted:false, lat: 27.061667813752774, lng: 55.98632812500001, title: "بندرلنگه", Address: "بندرلنگه خیابان اول پلاک 1", placeType: "r" },
+      { isDeleted:false, lat: 29.11600059007595, lng: 60.51269531250001, title: "زاهدان", Address: "زاهدان خیابان اول پلاک 1", placeType: "r" },
+      { isDeleted:false, lat: 31.767357597242206, lng: 48.91113281250001, title: "اهواز", Address: "اهواز خیابان اول پلاک 1", placeType: "r" },
+      { isDeleted:false, lat: 31.767357597242206, lng: 54.31640625000001, title: "یزد", Address: "یزد خیابان اول پلاک 1", placeType: "r" }
   ];
 
   ngOnInit(): void {
@@ -110,14 +114,22 @@ export class AppComponent implements OnInit {
 
     for (let i = 0; i < this.locationList.length; i++) {
       if (this.locationList[i].placeType == "h") {
-        L.marker([this.locationList[i].lat, this.locationList[i].lng], { icon: hotelIcon }).on('click', (e: L.LeafletMouseEvent) => { this.showDetails(i) }).addTo(hotelEditableLayers)
+        L.marker([this.locationList[i].lat, this.locationList[i].lng], { icon: hotelIcon })
+        .on('click', () => { this.showDetails(i) })
+        .on('dragend' , (e: L.LeafletEvent) => {this.editMarkerDetail(e,i)})
+        .on('remove' , () => {this.removeMarker(i)})
+        .addTo(hotelEditableLayers)
       } else {
-        L.marker([this.locationList[i].lat, this.locationList[i].lng], { icon: resturantIcon }).on('click', (e: L.LeafletMouseEvent) => { this.showDetails(i) }).addTo(hotelEditableLayers)
+        L.marker([this.locationList[i].lat, this.locationList[i].lng], { icon: resturantIcon })
+        .on('click', () => { this.showDetails(i) }).addTo(hotelEditableLayers)
+        .on('dragend', (e: L.LeafletEvent) => { this.editMarkerDetail(e, i) })
+        .on('remove', () => { this.removeMarker(i) })
+        .addTo(hotelEditableLayers)
 
       }
     }
 
-
+//part 9
     this.map.on('draw:created', (e: any) => {
       console.log(e);
 
@@ -125,9 +137,37 @@ export class AppComponent implements OnInit {
       var type = e.layerType;
 
       if (type == 'marker') {
-        e.layer.setIcon(hotelIcon);
+        // e.layer.setIcon(hotelIcon);
+        const dialogRef = this.dialog.open(CreateRecordComponent, {
+          width: '30%',
+          data: {
+            lat: layer._latlng.lat,
+            lng: layer._latlng.lng,
+          }
+        });
+        dialogRef.afterClosed().subscribe((result: any) =>{
+          if(result){
+            if (result.value.placeType === 'h') {
+              layer.setIcon(hotelIcon)
+              .on('click', () => { this.showDetails(this.locationList.length - 1) })
+              .on('dragend', (e: L.LeafletEvent) => { this.editMarkerDetail(e, this.locationList.length - 1) })
+              .addTo(hotelEditableLayers);
+
+
+            }else {
+              layer.setIcon(resturantIcon)
+              .on('click', () => {this.showDetails(this.locationList.length - 1) })
+              .on('dragend', (e: L.LeafletEvent) => { this.editMarkerDetail(e, this.locationList.length - 1) })
+              .addTo(hotelEditableLayers);
+            }
+
+            this.locationList.push();
+            hotelEditableLayers.addLayer(layer);
+
+          }
+        })
+
       }
-      hotelEditableLayers.addLayer(layer);
     })
 
   }
@@ -143,6 +183,39 @@ export class AppComponent implements OnInit {
 
       }
     });
+  }
+
+//part 10
+   editMarkerDetail(e: L.LeafletEvent, i: number)  {
+    console.log(e);
+    const dialogRef = this.dialog.open(EditRecordComponent, {
+      width: '30%',
+      data: {
+        lat: e.target._latlng.lat,
+        lng: e.target._latlng.lng,
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.locationList[i].Address = result.value.Address;
+      this.locationList[i].title = result.value.title;
+      this.locationList[i].lat = result.value.lat;
+      this.locationList[i].lng = result.value.lng;
+    })
+  }
+
+   removeMarker = (i: number) => {
+    const dialogRef = this.dialog.open(RemoveRecordComponent, {
+      width: '30%',
+      data: {
+        title: this.locationList[i].title
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.locationList[i].isDeleted = true;
+      }
+    })
   }
 
 

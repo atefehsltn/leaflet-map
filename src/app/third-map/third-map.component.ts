@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import * as L from 'leaflet';
 import 'leaflet-draw';
 import "leaflet-draw/dist/leaflet.draw.js";
-import { ShowDialogComponent } from '../show-dialog/show-dialog.component';
+import { ShowDialogComponent } from '../components/show-dialog/show-dialog.component';
 
 
 @Component({

@@ -1,0 +1,25 @@
+<h2 mat-dialog-title class="dir">ایجاد رکورد جدید</h2>
+
+<mat-dialog-content class="form-container dir" [formGroup]="addFrm">
+        <mat-form-field appearance="fill">
+            <mat-label>نوع مکان</mat-label>
+            <mat-select formControlName="placeType" class="dir">
+                <mat-option value="h">هتل</mat-option>
+                <mat-option value="r">رستوران</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>عنوان</mat-label>
+            <input matInput formControlName="title">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>آدرس</mat-label>
+            <textarea matInput formControlName="Address"></textarea>
+        </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-button type="submit" (click)="saveData()" mat-dialog-close>ذخیره</button>
+
+    <button type="button" mat-button mat-dialog-close>انصراف</button>
+</mat-dialog-actions>
